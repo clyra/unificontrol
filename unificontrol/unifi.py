@@ -82,6 +82,7 @@ class UnifiClient(metaclass=MetaNameFixer):
             and pin that cert for future accesses.
         server_type (UnifiServerType): Type of server, either classic stand-alone
             network serfver or the newer Unifi Dream Machine. Defaults to classic.
+        verify: Set to False to ignore verifying the SSL certificate    
     """
 
     def __init__(self, host="localhost", port=None,
