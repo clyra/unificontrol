@@ -86,7 +86,7 @@ class UnifiClient(metaclass=MetaNameFixer):
 
     def __init__(self, host="localhost", port=None,
                  username="admin", password=None, site="default",
-                 cert=FETCH_CERT, server_type=UnifiServerType.CLASSIC):
+                 cert=FETCH_CERT, server_type=UnifiServerType.CLASSIC, verify=True):
         if port is None or server_type == UnifiServerType.GUESS:
             server_type, port = _guess_server_and_port(host, server_type, port)
 
@@ -99,6 +99,7 @@ class UnifiClient(metaclass=MetaNameFixer):
         self._session = requests.session()
         self._exit_handler = None
         self._https_adaptor = None
+        self.verify = verify
 
         if cert == FETCH_CERT:
             cert = ssl.get_server_certificate((host, port))
@@ -111,7 +112,7 @@ class UnifiClient(metaclass=MetaNameFixer):
         request = requests.Request(method, url, json=rest_dict)
         ses = self._session
 
-        resp = ses.send(ses.prepare_request(request))
+        resp = ses.send(ses.prepare_request(request), verify=self.verify)
 
         # If we fail with unauthorised and need login then retry just once
         if resp.status_code == 401 and need_login:
